@@ -55,9 +55,9 @@ function Sidebar(props) {
             {dashRoutes
               .filter((item) => {
                 return (
-                  (!item.roles?.length ||
-                    item.roles?.some((r) => userInfo?.roles?.includes(r))) &&
-                  !item.noSidebar
+                  !item.roles?.length ||
+                  item.roles?.some((r) => userInfo?.roles?.includes(r))
+                  // !item.noSidebar
                 );
               })
               .map((prop: any, key) => {
