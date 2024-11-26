@@ -175,7 +175,7 @@ function DemoNavbar(props) {
           </div>
         </Tooltip> */}
 
-        <UserInfo />
+        {/* <UserInfo /> */}
         {/* <Dropdown
           overlayClassName="dropdown-user-info"
           menu={{
