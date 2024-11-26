@@ -1,0 +1,121 @@
+#webpack-dev-server-client-overlay {
+  display: none;
+}
+.sidebar {
+  width: 210px;
+
+  &:after {
+    background: var(--red);
+  }
+  .nav {
+    .active > a,
+    .active > a > i {
+      color: var(--red) !important;
+    }
+  }
+}
+.main-panel {
+  width: 100vw;
+}
+.sidebar,
+.navbar.navbar-absolute {
+  z-index: 900;
+}
+// .ant-modal-mask,
+// .ant-modal-wrap {
+//   z-index: 1100;
+// }
+.app-button,
+.app-button:hover,
+.app-button:focus {
+  background: var(--red);
+  border-color: var(--red);
+  font-weight: 600;
+  color: white;
+  // color: white;
+  span {
+    color: white;
+  }
+
+  &.red {
+    background: var(--red);
+    border-color: var(--red);
+  }
+  &.green {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  &.gray {
+    background: var(--gray);
+    border-color: var(--gray);
+  }
+  &.bg-blue {
+    background-color: var(--blue);
+    border-color: var(--blue);
+  }
+  &.bg-red {
+    background-color: var(--red);
+    border-color: var(--red);
+  }
+  &.bg-gray {
+    background-color: var(--gray);
+    border-color: var(--gray);
+  }
+  &.bg-green {
+    background-color: var(--green);
+    border-color: var(--green);
+  }
+}
+
+.btn-sale {
+  height: 100%;
+}
+
+body {
+  font-family: sans-serif, Arial, "Plus Jakarta Sans", sans-serif;
+  color: #121212;
+}
+
+.main-panel div > .content {
+  padding: 0 30px 30px;
+  min-height: calc(100vh - 123px);
+  margin-top: -60px;
+}
+
+.sidebar .nav p {
+  font-size: 11px;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.text-red {
+  color: var(--red);
+}
+.dropdown-user-info {
+  li {
+    &:hover {
+      background-color: #ffdadf;
+    }
+  }
+}
+
+.bg-green {
+  background-color: var(--green);
+  border-color: var(--green);
+}
+
+// .app-button {
+//   padding: 10px;
+//   height: 45px;
+//   &:hover,
+//   &:focus {
+//     background-color: var(--green);
+//     border-color: var(--green);
+//   }
+// }
