@@ -23,7 +23,14 @@ ChartJS.register(
   Legend
 );
 
-const LineChart = ({ labels = [], realValues = [], values = [],max = 10, min = -10 }) => {
+const LineChart = ({
+  labels = [],
+  realValues = [],
+  warningValues = [],
+  values = [],
+  max = 10,
+  min = -10,
+}) => {
   // Define the data
   const data = {
     labels: labels,
@@ -41,7 +48,7 @@ const LineChart = ({ labels = [], realValues = [], values = [],max = 10, min = -
       {
         label: "Ngưỡng cảnh báo",
         // data: [150, 200, 180, 220, 240, 260],
-        data: values.map(i => 0.5),
+        data: warningValues, // realValues.map(i => 0.5)
         borderColor: "#dc3545",
         backgroundColor: "#e58d96",
         tension: 0.4, // Curvature of the line
@@ -77,7 +84,7 @@ const LineChart = ({ labels = [], realValues = [], values = [],max = 10, min = -
       y: {
         beginAtZero: false,
         max,
-        min
+        min,
       },
     },
   };

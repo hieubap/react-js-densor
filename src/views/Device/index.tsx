@@ -100,6 +100,14 @@ function Manager() {
       });
     });
 
+    const threshold = ref(database, "threshold");
+    onValue(threshold, (snapshot) => {
+      const data = snapshot.val();
+      setState({
+        threshold: data,
+      });
+    });
+
     const prediction = ref(database, "predictions");
     onValue(prediction, (snapshot) => {
       const data = snapshot.val();
@@ -122,77 +130,91 @@ function Manager() {
 
   console.log(state, "state");
 
-  const { labels, predictValues, realValues, min, max, options } =
-    useMemo(() => {
-      if (!state.MPU6050 || !state.prediction) return {};
-      const options = [
-        ...Object.keys(state.prediction),
-        ...Object.keys(state.MPU6050),
-      ]
-        .sort()
-        .map((k) => ({
-          label: k,
-          value: k,
-        }));
+  const {
+    labels,
+    predictValues,
+    realValues,
+    warningValues,
+    min,
+    max,
+    options,
+  } = useMemo(() => {
+    if (!state.MPU6050 || !state.prediction) return {};
+    const options = [
+      ...Object.keys(state.prediction),
+      ...Object.keys(state.MPU6050),
+    ]
+      .sort()
+      .map((k) => ({
+        label: k,
+        value: k,
+      }));
 
-      const nowKey =
-        state.dateField || options[0].value || moment().format("DD-MM-YYYY");
+    const nowKey =
+      state.dateField || options[0].value || moment().format("DD-MM-YYYY");
 
-      const entries = state.MPU6050[nowKey]
-        ? Object.entries(state.MPU6050[nowKey])
-        : state.prediction[nowKey]
-        ? Object.entries(state.prediction[nowKey])
-        : [];
-      const labels = entries
-        .map(([k, v]) => k)
-        .filter((_, i) => i > entries.length - 60);
-      // const realValues = entries.map(([k, v]) => (v as any).AccX);
-      console.log(labels, "labels");
+    const entries = state.MPU6050[nowKey]
+      ? Object.entries(state.MPU6050[nowKey])
+      : state.prediction[nowKey]
+      ? Object.entries(state.prediction[nowKey])
+      : [];
+    const labels = entries
+      .map(([k, v]) => k)
+      .filter((_, i) => i > entries.length - 60);
+    // const realValues = entries.map(([k, v]) => (v as any).AccX);
+    console.log(labels, "labels");
 
-      const realValues = state.MPU6050[nowKey]
-        ? labels.map((k) => state.MPU6050[nowKey]?.[k]?.[state.field] || 0)
-        : [];
+    const realValues = state.MPU6050[nowKey]
+      ? labels.map((k) => state.MPU6050[nowKey]?.[k]?.[state.field] || 0)
+      : [];
 
-      console.log(state, "entries", realValues);
-      const predictions = state.prediction[nowKey];
-      // const predictEntries = predictions
-      //   ? Object.entries(state.prediction[nowKey] || {})
-      //   : [];
+    console.log(state, "entries", realValues);
+    const predictions = state.prediction[nowKey];
+    // const predictEntries = predictions
+    //   ? Object.entries(state.prediction[nowKey] || {})
+    //   : [];
 
-      // const labels = entries.map(([k, v]) => k);
-      // const predictValues = predictEntries.map(([k, v]) => (v as any).AccX);
+    // const labels = entries.map(([k, v]) => k);
+    // const predictValues = predictEntries.map(([k, v]) => (v as any).AccX);
 
-      const predictValues = state.prediction?.[nowKey]
-        ? labels.map((k) => state.prediction?.[nowKey]?.[k]?.[state.field] || 0)
-        : [];
-      // const predictValues =
-      //   predictEntries?.map(([k, v]) => (v as any)[state.field]) || [];
-      console.log("prediction_real", predictValues, realValues);
-      // console.log(predictions, "predictions", nowKey);
+    const predictValues = state.prediction?.[nowKey]
+      ? labels.map((k) => state.prediction?.[nowKey]?.[k]?.[state.field] || 0)
+      : [];
+    // const predictValues =
+    //   predictEntries?.map(([k, v]) => (v as any)[state.field]) || [];
+    console.log("prediction_real", predictValues, realValues);
+    // console.log(predictions, "predictions", nowKey);
 
-      const max =
-        (!!realValues.length ? realValues : predictValues)?.reduce(
-          (a, b) => (a > b ? a : b),
-          0
-        ) * (!!realValues.length ? 3 : 1);
-      const _m = (!!realValues.length ? realValues : predictValues)?.reduce(
-        (a, b) => (a < b ? a : b),
-        Number.MAX_SAFE_INTEGER
-      );
+    const max =
+      (!!realValues.length ? realValues : predictValues)?.reduce(
+        (a, b) => (a > b ? a : b),
+        0
+      ) * (!!realValues.length ? 3 : 1);
+    const _m = (!!realValues.length ? realValues : predictValues)?.reduce(
+      (a, b) => (a < b ? a : b),
+      Number.MAX_SAFE_INTEGER
+    );
 
-      const min = _m < 0 ? (!!realValues.length ? 3 : 1) * _m : 0;
+    const min = _m < 0 ? (!!realValues.length ? 3 : 1) * _m : 0;
 
-      console.log(min, max, "min_max");
+    console.log(min, max, "min_max");
 
-      return {
-        labels,
-        realValues,
-        predictValues,
-        min,
-        max,
-        options,
-      };
-    }, [state.MPU6050, state.prediction, state.field, state.dateField]);
+    return {
+      labels,
+      realValues,
+      warningValues: realValues.map((i) => state.threshold || 0.5),
+      predictValues,
+      min,
+      max,
+      options,
+    };
+  }, [
+    state.MPU6050,
+    state.prediction,
+    state.field,
+    state.dateField,
+    state.threshold,
+  ]);
 
   return (
     <AppCard>
@@ -295,6 +317,7 @@ function Manager() {
                 labels={labels}
                 values={predictValues}
                 realValues={realValues}
+                warningValues={warningValues}
                 max={max}
                 min={min}
               />
